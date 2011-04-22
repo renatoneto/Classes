@@ -138,15 +138,12 @@ class SimpleCache {
      */
     protected function getExpiration($time) {
 	switch($time) {
-
 	    case is_int($time):
 		return time() + ($time * 3600);
 		break;
-
 	    case is_string($time):
 		return strtotime($time);
 		break;
-
 	    default:
 		throw new SimpleCache_Exception('Formato de tempo inválido');
 	}
