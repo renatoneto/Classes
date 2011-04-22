@@ -1,7 +1,7 @@
 <?php 
 require('SimpleCache.php');
 
-$cache = new SimpleCache('/home/skape/web/cache');
+$cache = new SimpleCache('/path/to/cache/dir');
 
 $feed = $cache->read('feed-phparch');
 
