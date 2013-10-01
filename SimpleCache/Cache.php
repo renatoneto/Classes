@@ -1,4 +1,6 @@
 <?php
+require_once('Exception.php');
+require_once('Item.php');
 /**
  * SimpleCache
  * Gerenciamento simples de cache
