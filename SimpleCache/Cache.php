@@ -3,10 +3,12 @@
  * SimpleCache
  * Gerenciamento simples de cache
  * 
- * @author Renato Neto - http://renatodev.com <skapemr@gmail.com>
+ * @author Renato Neto - http://renatoneto.net
  * @version 1.0
  */
-class SimpleCache {
+class SimpleCache_Cache 
+{
+	
     /**
      * Tempo de validade padrão do cache (minutos)
      */
@@ -29,12 +31,9 @@ class SimpleCache {
      * 
      * @param string $path Caminho do diretório
      */
-    public function __construct($path) {
-	try {
-	    $this->setCachePath($path);
-	} catch(SimpleCache_Exception $e) {
-	    echo $e->getMessage();
-	}
+    public function __construct($path) 
+    {
+    	$this->setCachePath($path);
     }
 
     /**
@@ -43,7 +42,8 @@ class SimpleCache {
      * @param string $path Caminho do diretório
      * @return bool 
      */
-    protected function setCachePath($path) {
+    public function setCachePath($path) 
+    {
 	if(file_exists($path) && is_dir($path) && is_writable($path)) {
 	    if(substr($path, -1) != DIRECTORY_SEPARATOR) {
 		$path .= DIRECTORY_SEPARATOR;
@@ -60,7 +60,8 @@ class SimpleCache {
      * 
      * @return string 
      */
-    protected function getCachePath() {
+    protected function getCachePath() 
+    {
 	return $this->_cachePath;
     }
 
@@ -72,18 +73,14 @@ class SimpleCache {
      * @param mixed $time Tempo de validade (pode ser um inteiro que indica os minutos ou textual [inglês])
      * @return bool
      */
-    public function save($name, $content, $time = self::DEFAULT_EXPIRATION_TIME) {
-	try {
+    public function save($name, $content, $time = self::DEFAULT_EXPIRATION_TIME) 
+    {
+    	$cache = new SimpleCache_Item($content, $this->getExpiration($time));
+    	if(!file_put_contents($this->getCacheFilePath($name), $cache)) {
+	    throw new SimpleCache_Exception('Houve um erro ao salvar o cache.');
+    	}
 
-	    $cache = new SimpleCache_Item($content, $this->getExpiration($time));
-	    if(!file_put_contents($this->getCacheFilePath($name), $cache)) {
-		throw new SimpleCache_Exception('Houve um erro ao salvar o cache.');
-	    }
-
-	    return true;
-	} catch(SimpleCache_Exception $e) {
-	    echo $e->getMessage();
-	}
+        return true;
     }
 
     /**
@@ -92,7 +89,8 @@ class SimpleCache {
      * @param string $name Identificador do cache
      * @return mixed 
      */
-    public function read($name) {
+    public function read($name) 
+    {
 	$cacheFile = $this->getCacheFilePath($name);
 
 	if(file_exists($cacheFile)) {
@@ -119,7 +117,8 @@ class SimpleCache {
      * @param string $name Identificador do cache
      * @return bool 
      */
-    public function delete($name) {
+    public function delete($name) 
+    {
 	$name = $this->getCacheFilePath($name);
 
 	if(file_exists($name) && unlink($name)) {
@@ -136,7 +135,8 @@ class SimpleCache {
      * @param mixed $time Expressão à ser convertida
      * @return integer 
      */
-    protected function getExpiration($time) {
+    protected function getExpiration($time) 
+    {
 	switch($time) {
 	    case is_int($time):
 		return time() + ($time * 3600);
@@ -155,26 +155,9 @@ class SimpleCache {
      * @param string $name Identificador do cache
      * @return string 
      */
-    protected function getCacheFilePath($name) {
+    protected function getCacheFilePath($name) 
+    {
 	return $this->getCachePath() . md5($name) . self::CACHE_EXTENSION;
-    }
-
-}
-
-class SimpleCache_Exception extends Exception {}
-
-class SimpleCache_Item {
-
-    public $expiration;
-    public $content;
-
-    public function __construct($content, $expiration) {
-	$this->expiration = $expiration;
-	$this->content = $content;
-    }
-
-    public function __toString() {
-	return serialize($this);
     }
 
 }
